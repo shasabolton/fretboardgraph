@@ -5,9 +5,25 @@ class FretboardCanvas {
     this.app = app;
     this.frets = 11;
     this.strings = app.stringSemis.length;
-    this.scrollOffset = 0;
+    this._scrollOffset = 0;
     this._lastX = 0;
+    this._progressionNote = "#B8D4E8";
   }
+
+  setScrollOffset(val) {
+    if (this._scrollOffset === val) return;
+    this._scrollOffset = val;
+    this.updateCanvas();
+  }
+
+  setProgressionNote(val) {
+    if (this._progressionNote === val) return;
+    this._progressionNote = val;
+    this.updateCanvas();
+  }
+
+  get scrollOffset() { return this._scrollOffset; }
+  get progressionNote() { return this._progressionNote; }
 
   updateCanvas() {
     var self = this;
@@ -28,7 +44,7 @@ class FretboardCanvas {
     var originX = (w - fretboardW) / 2;
     var originY = (h - fretboardH) / 2;
 
-    var scrollX = ((this.scrollOffset % fretboardW) + fretboardW) % fretboardW;
+    var scrollX = ((this._scrollOffset % fretboardW) + fretboardW) % fretboardW;
     var scrollDir = handed === "left" ? -scrollX : scrollX;
 
     var x = function (fx) {
@@ -85,12 +101,14 @@ class FretboardCanvas {
         var cy = y((s + 1) * cellH);
         var semis = self.app.calcSemitones(s, f);
         var deg = self.app.semitonesToDegree(semis);
+        var prog = self.app.chordProgression || [];
+        var isProg = deg.length === 1 && prog.indexOf(parseInt(deg, 10)) !== -1;
 
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.strokeStyle = "#333";
         ctx.stroke();
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = isProg ? self._progressionNote : "#fff";
         ctx.fill();
 
         ctx.fillStyle = "#333";
@@ -121,9 +139,8 @@ class FretboardCanvas {
     function onMove(e) {
       e.preventDefault();
       var currX = getX(e);
-      self.scrollOffset -= currX - self._lastX;
+      self.setScrollOffset(self._scrollOffset - (currX - self._lastX));
       self._lastX = currX;
-      self.updateCanvas();
     }
 
     function onEnd() {

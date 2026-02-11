@@ -29,6 +29,21 @@
   window.addEventListener("load", function () {
     resize();
     app.init();
+    var sel = document.getElementById("progressionSelect");
+    if (sel && typeof CHORD_PROGRESSIONS !== "undefined") {
+      app.setProgressionUI(sel);
+      for (var i = 0; i < CHORD_PROGRESSIONS.length; i++) {
+        var opt = document.createElement("option");
+        opt.value = i;
+        opt.textContent = CHORD_PROGRESSIONS[i].name;
+        sel.appendChild(opt);
+      }
+      sel.selectedIndex = 0;
+      sel.addEventListener("change", function () {
+        var idx = parseInt(sel.value, 10);
+        app.setChordProgression(CHORD_PROGRESSIONS[idx].progression.slice());
+      });
+    }
     var btn = document.getElementById("handedBtn");
     if (btn) {
       btn.addEventListener("click", function () {

@@ -4,7 +4,8 @@ No server
 no ES6 modules
 Must work on mobile and desktop, click and touch.
 Organize into classes with separate files.
-Keep code and logic small, concise, interpretable
+Keep code and logic small, concise, interpretable. Annotate
+All mutable class properties use setters. Never assign directly. Setters: at the start, return early if the new value equals the current value. Then (1) update the value, (2) run side effects (redraw, etc.), (3) sync bound UI.
 
 phase 1
 Make an App class in its own file

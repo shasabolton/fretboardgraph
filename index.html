@@ -20,17 +20,19 @@
       gap: 8px;
       z-index: 1;
     }
-    #controls button {
+    #controls button, #controls select {
       padding: 6px 12px;
     }
   </style>
 </head>
 <body>
   <div id="controls">
+    <select id="progressionSelect"></select>
     <button id="handedBtn">Handed: Right</button>
     <button id="flipVerticalBtn">Flip V</button>
   </div>
   <canvas id="fretboard"></canvas>
+  <script src="data/chordProgressions.js"></script>
   <script src="FretboardCanvas.js"></script>
   <script src="App.js"></script>
   <script src="index.js"></script>
