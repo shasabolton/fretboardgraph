@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fretboard Graph</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; overflow: hidden; }
+    body { position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #444; }
+    #fretboard {
+      display: block;
+      touch-action: none;
+    }
+    #controls {
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      display: flex;
+      gap: 8px;
+      z-index: 1;
+    }
+    #controls button {
+      padding: 6px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div id="controls">
+    <button id="handedBtn">Handed: Right</button>
+    <button id="flipVerticalBtn">Flip V</button>
+  </div>
+  <canvas id="fretboard"></canvas>
+  <script src="FretboardCanvas.js"></script>
+  <script src="App.js"></script>
+  <script src="index.js"></script>
+</body>
+</html>
