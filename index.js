@@ -21,9 +21,7 @@
     canvas.height = ch;
     canvas.style.width = cw + "px";
     canvas.style.height = ch + "px";
-    if (app.fretboardCanvas) {
-      app.fretboardCanvas.updateCanvas();
-    }
+    app.update();
   }
 
   window.addEventListener("load", function () {
@@ -42,6 +40,7 @@
       sel.addEventListener("change", function () {
         var idx = parseInt(sel.value, 10);
         app.setChordProgression(CHORD_PROGRESSIONS[idx].progression.slice());
+        if (app.setPathUI) app.setPathUI();
       });
     }
     var btn = document.getElementById("handedBtn");
@@ -62,6 +61,32 @@
     if (shiftLeft) shiftLeft.addEventListener("click", function () { app.addFretOffset(-1); });
     var shiftRight = document.getElementById("shiftRightBtn");
     if (shiftRight) shiftRight.addEventListener("click", function () { app.addFretOffset(1); });
+
+    function refreshPathUI() {
+      var lbl = document.getElementById("pathLabel");
+      var prev = document.getElementById("pathPrevBtn");
+      var next = document.getElementById("pathNextBtn");
+      if (!lbl) return;
+      var n = app.progressionPaths.length;
+      var i = app.pathIndex;
+      lbl.textContent = "Path " + (n > 0 ? (i + 1) + " of " + n : "0");
+      if (prev) prev.disabled = n <= 1;
+      if (next) next.disabled = n <= 1;
+    }
+
+    var pathPrev = document.getElementById("pathPrevBtn");
+    var pathNext = document.getElementById("pathNextBtn");
+    if (pathPrev) pathPrev.addEventListener("click", function () {
+      app.setPathIndex(app.pathIndex - 1);
+      refreshPathUI();
+    });
+    if (pathNext) pathNext.addEventListener("click", function () {
+      app.setPathIndex(app.pathIndex + 1);
+      refreshPathUI();
+    });
+
+    app.setPathUI = function () { refreshPathUI(); };
+    refreshPathUI();
   });
 
   window.addEventListener("resize", resize);
