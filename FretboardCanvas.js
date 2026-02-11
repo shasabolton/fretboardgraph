@@ -28,40 +28,39 @@ class FretboardCanvas {
     var originX = (w - fretboardW) / 2;
     var originY = (h - fretboardH) / 2;
 
-    var drawOffset = ((this.scrollOffset % fretboardW) + fretboardW) % fretboardW;
+    var scrollX = ((this.scrollOffset % fretboardW) + fretboardW) % fretboardW;
+    var scrollDir = handed === "left" ? -scrollX : scrollX;
 
     var x = function (fx) {
-      return originX + (handed === "left" ? fretboardW - fx : fx);
+      var viewX = ((fx - scrollDir) % fretboardW + fretboardW) % fretboardW;
+      return originX + (handed === "left" ? fretboardW - viewX : viewX);
     };
     var y = function (sy) {
       return originY + (flipV ? fretboardH - sy : sy);
     };
 
-    // --- Wood neck: burlywood, no margin ---
     var neckTop = originY;
     var neckBottom = originY + fretboardH;
     var neckLeft = originX;
     var neckRight = originX + fretboardW;
-
     var radius = Math.min(cellW, cellH) * 0.28;
 
-    var drawPeriod = function (dx) {
-      ctx.save();
-      ctx.translate(-drawOffset + dx, 0);
-      ctx.fillStyle = "burlywood";
-    ctx.fillRect(neckLeft, neckTop, neckRight - neckLeft, neckBottom - neckTop);
+    ctx.save();
+    ctx.beginPath();
+    ctx.rect(neckLeft, neckTop, fretboardW, neckBottom - neckTop);
+    ctx.clip();
 
-    // --- Fret bars: vertical bars between cells (nut at 0, bars at 1..10) ---
+    ctx.fillStyle = "burlywood";
+    ctx.fillRect(neckLeft, neckTop, fretboardW, neckBottom - neckTop);
+
     var neckHeight = neckBottom - neckTop;
     var fretBarWidth = Math.max(2, neckHeight * 0.035);
     for (var f = 0; f < self.frets; f++) {
       var fx = f * cellW;
-      var barLeft = x(fx) - fretBarWidth / 2;
       ctx.fillStyle = "darkGoldenRod";
-      ctx.fillRect(barLeft, neckTop, fretBarWidth, neckHeight);
+      ctx.fillRect(x(fx) - fretBarWidth / 2, neckTop, fretBarWidth, neckHeight);
     }
 
-    // --- Strings: thick at index 0 (bass) to thin, pale with border ---
     var maxThick = cellH * 0.28;
     var minThick = cellH * 0.05;
     for (var s = 0; s < self.strings; s++) {
@@ -69,13 +68,17 @@ class FretboardCanvas {
       var sy = (s + 1) * cellH;
       var top = y(sy) - thick / 2;
       ctx.fillStyle = "#F5F0E6";
-      ctx.fillRect(neckLeft, top, neckRight - neckLeft, thick);
+      ctx.fillRect(neckLeft, top, fretboardW, thick);
       ctx.strokeStyle = "#8B7355";
       ctx.lineWidth = 1;
-      ctx.strokeRect(neckLeft, top, neckRight - neckLeft, thick);
+      ctx.beginPath();
+      ctx.moveTo(neckLeft, top);
+      ctx.lineTo(neckRight, top);
+      ctx.moveTo(neckLeft, top + thick);
+      ctx.lineTo(neckRight, top + thick);
+      ctx.stroke();
     }
 
-    // --- Degree circles and labels ---
     for (var s = 0; s < self.strings; s++) {
       for (var f = 0; f < self.frets; f++) {
         var cx = x((f + 0.5) * cellW);
@@ -97,11 +100,8 @@ class FretboardCanvas {
         ctx.fillText(deg, cx, cy);
       }
     }
-      ctx.restore();
-    };
 
-    drawPeriod(0);
-    drawPeriod(fretboardW);
+    ctx.restore();
   }
 
   setupScroll() {
