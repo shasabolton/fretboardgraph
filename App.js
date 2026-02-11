@@ -8,6 +8,15 @@ class App {
     this._progressionSelect = null;
   }
 
+  addFretOffset(delta) {
+    if (delta === 0) return;
+    var arr = [];
+    for (var i = 0; i < this._stringSemis.length; i++) {
+      arr.push(this._stringSemis[i] + delta);
+    }
+    this.setStringSemis(arr);
+  }
+
   _arraysEqual(a, b) {
     if (a.length !== b.length) return false;
     for (var i = 0; i < a.length; i++) {
@@ -95,6 +104,5 @@ class App {
 
     this.fretboardCanvas = new FretboardCanvas(canvas, this);
     this.fretboardCanvas.updateCanvas();
-    this.fretboardCanvas.setupScroll();
   }
 }

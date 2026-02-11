@@ -5,15 +5,7 @@ class FretboardCanvas {
     this.app = app;
     this.frets = 11;
     this.strings = app.stringSemis.length;
-    this._scrollOffset = 0;
-    this._lastX = 0;
     this._progressionNote = "#B8D4E8";
-  }
-
-  setScrollOffset(val) {
-    if (this._scrollOffset === val) return;
-    this._scrollOffset = val;
-    this.updateCanvas();
   }
 
   setProgressionNote(val) {
@@ -22,7 +14,6 @@ class FretboardCanvas {
     this.updateCanvas();
   }
 
-  get scrollOffset() { return this._scrollOffset; }
   get progressionNote() { return this._progressionNote; }
 
   updateCanvas() {
@@ -44,12 +35,8 @@ class FretboardCanvas {
     var originX = (w - fretboardW) / 2;
     var originY = (h - fretboardH) / 2;
 
-    var scrollX = ((this._scrollOffset % fretboardW) + fretboardW) % fretboardW;
-    var scrollDir = handed === "left" ? -scrollX : scrollX;
-
     var x = function (fx) {
-      var viewX = ((fx - scrollDir) % fretboardW + fretboardW) % fretboardW;
-      return originX + (handed === "left" ? fretboardW - viewX : viewX);
+      return originX + (handed === "left" ? fretboardW - fx : fx);
     };
     var y = function (sy) {
       return originY + (flipV ? fretboardH - sy : sy);
@@ -120,41 +107,5 @@ class FretboardCanvas {
     }
 
     ctx.restore();
-  }
-
-  setupScroll() {
-    var self = this;
-    var canvas = this.canvas;
-
-    function getX(e) {
-      if (e.touches) return e.touches[0].clientX;
-      return e.clientX;
-    }
-
-    function onStart(e) {
-      e.preventDefault();
-      self._lastX = getX(e);
-    }
-
-    function onMove(e) {
-      e.preventDefault();
-      var currX = getX(e);
-      self.setScrollOffset(self._scrollOffset - (currX - self._lastX));
-      self._lastX = currX;
-    }
-
-    function onEnd() {
-      self._lastX = 0;
-    }
-
-    canvas.addEventListener("touchstart", onStart, { passive: false });
-    canvas.addEventListener("touchmove", onMove, { passive: false });
-    canvas.addEventListener("touchend", onEnd);
-    canvas.addEventListener("mousedown", onStart);
-    canvas.addEventListener("mousemove", function (e) {
-      if (e.buttons) onMove(e);
-    });
-    canvas.addEventListener("mouseup", onEnd);
-    canvas.addEventListener("mouseleave", onEnd);
   }
 }

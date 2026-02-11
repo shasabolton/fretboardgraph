@@ -58,6 +58,10 @@
         flipBtn.textContent = app.flipVertical ? "Flip V ✓" : "Flip V";
       });
     }
+    var shiftLeft = document.getElementById("shiftLeftBtn");
+    if (shiftLeft) shiftLeft.addEventListener("click", function () { app.addFretOffset(-1); });
+    var shiftRight = document.getElementById("shiftRightBtn");
+    if (shiftRight) shiftRight.addEventListener("click", function () { app.addFretOffset(1); });
   });
 
   window.addEventListener("resize", resize);
