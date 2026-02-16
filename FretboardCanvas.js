@@ -73,7 +73,7 @@ class FretboardCanvas {
       ctx.fillStyle = "#F5F0E6";
       ctx.fillRect(neckLeft, top, fretboardW, thick);
       ctx.strokeStyle = "#8B7355";
-      ctx.lineWidth = 1;
+      ctx.lineWidth = Math.max(1, window.devicePixelRatio || 1);
       ctx.beginPath();
       ctx.moveTo(neckLeft, top);
       ctx.lineTo(neckRight, top);
@@ -116,7 +116,7 @@ class FretboardCanvas {
         ctx.stroke();
 
         // Keep arrows subtle and centered on each segment so notes stay legible.
-        var headLen = Math.min(radius * 0.5, len * 0.25);
+        var headLen = Math.min(radius * 1.0, len * 0.25);
         if (headLen < 1) continue;
         var headHalfWidth = headLen * 0.55;
         var midX = (a.x + b.x) * 0.5;

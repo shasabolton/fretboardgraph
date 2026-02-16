@@ -23,6 +23,27 @@
     #controls button, #controls select {
       padding: 6px 12px;
     }
+    #stringFilters {
+      position: absolute;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .string-filter-item {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transform: translate(-100%, -50%);
+      color: #fff;
+      font: 12px sans-serif;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+      pointer-events: auto;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .string-filter-item input {
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -39,6 +60,7 @@
     <button id="flipVerticalBtn">Flip V</button>
   </div>
   <canvas id="fretboard"></canvas>
+  <div id="stringFilters" aria-label="String path filters"></div>
   <script src="data/chordProgressions.js"></script>
   <script src="FretboardCanvas.js"></script>
   <script src="App.js"></script>

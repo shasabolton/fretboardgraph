@@ -7,7 +7,9 @@ class App {
     this._chordProgression = ["1", "5", "6", "4"];
     this._progressionSelect = null;
     this.semiMatrix = [];
-    this._stringsUsed = [0, 1];
+    this._stringsUsed = [];
+    for (var si = 0; si < this._stringSemis.length; si++) this._stringsUsed.push(si);
+    this._stringFilterInputs = [];
     this.progressionPaths = [];
     this._pathIndex = 0;
   }
@@ -45,6 +47,8 @@ class App {
     this.generateSemisMatrix();
     this.generateProgressionPaths();
     if (this.fretboardCanvas) this.fretboardCanvas.updateCanvas();
+    if (this.layoutStringFilterUI) this.layoutStringFilterUI();
+    if (this.setPathUI) this.setPathUI();
   }
 
   generateProgressionPaths() {
@@ -122,9 +126,20 @@ class App {
   }
 
   setStringsUsed(arr) {
-    if (this._arraysEqual(this._stringsUsed, arr)) return;
-    this._stringsUsed = arr.slice();
+    if (!arr) arr = [];
+    var next = [];
+    for (var i = 0; i < arr.length; i++) {
+      var idx = parseInt(arr[i], 10);
+      if (isNaN(idx)) continue;
+      if (idx < 0 || idx >= this._stringSemis.length) continue;
+      if (next.indexOf(idx) !== -1) continue;
+      next.push(idx);
+    }
+    next.sort(function (a, b) { return a - b; });
+    if (this._arraysEqual(this._stringsUsed, next)) return;
+    this._stringsUsed = next;
     this.update();
+    this._syncStringFilterUI();
   }
 
   setChordProgression(progression) {
@@ -152,6 +167,23 @@ class App {
 
   setProgressionUI(selectEl) {
     this._progressionSelect = selectEl;
+  }
+
+  setStringFilterUI(inputs) {
+    if (this._stringFilterInputs === inputs) return;
+    this._stringFilterInputs = inputs || [];
+    this._syncStringFilterUI();
+  }
+
+  _syncStringFilterUI() {
+    if (!this._stringFilterInputs || !this._stringFilterInputs.length) return;
+    for (var i = 0; i < this._stringFilterInputs.length; i++) {
+      var input = this._stringFilterInputs[i];
+      if (!input) continue;
+      var idx = parseInt(input.getAttribute("data-string-index"), 10);
+      if (isNaN(idx)) continue;
+      input.checked = this._stringsUsed.indexOf(idx) !== -1;
+    }
   }
 
   toggleHanded() {
