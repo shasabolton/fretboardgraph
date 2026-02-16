@@ -82,6 +82,60 @@ class FretboardCanvas {
       ctx.stroke();
     }
 
+    var toPx = function (pt) {
+      var fx = (pt.x + 0.5) * cellW;
+      var sy = (pt.y + 1) * cellH;
+      return { x: x(fx), y: y(sy) };
+    };
+
+    var paths = self.app.progressionPaths || [];
+    var pathIdx = self.app.pathIndex;
+    var pathsToDraw = paths.length > 0 && pathIdx >= 0 && pathIdx < paths.length
+      ? [paths[pathIdx]]
+      : paths;
+    var alpha = pathsToDraw.length === 1 ? 0.6 : 0.35;
+    var pathColor = "rgba(80, 80, 120, " + alpha + ")";
+    ctx.strokeStyle = pathColor;
+    ctx.lineWidth = Math.max(1, radius * 0.22);
+    ctx.lineCap = "round";
+    ctx.lineJoin = "round";
+    for (var pi = 0; pi < pathsToDraw.length; pi++) {
+      var path = pathsToDraw[pi];
+      for (var j = 0; j < path.length - 1; j++) {
+        var a = toPx(path[j]);
+        var b = toPx(path[j + 1]);
+        var dx = b.x - a.x;
+        var dy = b.y - a.y;
+        var len = Math.sqrt(dx * dx + dy * dy);
+        if (len < 1) continue;
+        var ux = dx / len;
+        var uy = dy / len;
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.stroke();
+
+        // Keep arrows subtle and centered on each segment so notes stay legible.
+        var headLen = Math.min(radius * 0.5, len * 0.25);
+        if (headLen < 1) continue;
+        var headHalfWidth = headLen * 0.55;
+        var midX = (a.x + b.x) * 0.5;
+        var midY = (a.y + b.y) * 0.5;
+        var tipX = midX + ux * (headLen * 0.5);
+        var tipY = midY + uy * (headLen * 0.5);
+        var baseX = midX - ux * (headLen * 0.5);
+        var baseY = midY - uy * (headLen * 0.5);
+
+        ctx.beginPath();
+        ctx.moveTo(tipX, tipY);
+        ctx.lineTo(baseX - uy * headHalfWidth, baseY + ux * headHalfWidth);
+        ctx.lineTo(baseX + uy * headHalfWidth, baseY - ux * headHalfWidth);
+        ctx.closePath();
+        ctx.fillStyle = pathColor;
+        ctx.fill();
+      }
+    }
+
     for (var s = 0; s < self.strings; s++) {
       for (var f = 0; f < self.frets; f++) {
         var cx = x((f + 0.5) * cellW);
@@ -103,49 +157,6 @@ class FretboardCanvas {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(deg, cx, cy);
-      }
-    }
-
-    var toPx = function (pt) {
-      var fx = (pt.x + 0.5) * cellW;
-      var sy = (pt.y + 1) * cellH;
-      return { x: x(fx), y: y(sy) };
-    };
-
-    var paths = self.app.progressionPaths || [];
-    var pathIdx = self.app.pathIndex;
-    var pathsToDraw = paths.length > 0 && pathIdx >= 0 && pathIdx < paths.length
-      ? [paths[pathIdx]]
-      : paths;
-    var alpha = pathsToDraw.length === 1 ? 0.6 : 0.35;
-    ctx.strokeStyle = "rgba(80, 80, 120, " + alpha + ")";
-    ctx.lineWidth = Math.max(1, radius * 0.4);
-    ctx.lineCap = "round";
-    ctx.lineJoin = "round";
-    for (var pi = 0; pi < pathsToDraw.length; pi++) {
-      var path = pathsToDraw[pi];
-      for (var j = 0; j < path.length - 1; j++) {
-        var a = toPx(path[j]);
-        var b = toPx(path[j + 1]);
-        var dx = b.x - a.x;
-        var dy = b.y - a.y;
-        var len = Math.sqrt(dx * dx + dy * dy);
-        if (len < 1) continue;
-        var headLen = Math.min(radius * 1.2, len * 0.25);
-        var ux = dx / len;
-        var uy = dy / len;
-        ctx.beginPath();
-        ctx.moveTo(a.x, a.y);
-        ctx.lineTo(b.x - ux * headLen, b.y - uy * headLen);
-        ctx.stroke();
-        ctx.beginPath();
-        ctx.moveTo(b.x, b.y);
-        ctx.lineTo(b.x - ux * headLen - uy * headLen * 0.5, b.y - uy * headLen + ux * headLen * 0.5);
-        ctx.lineTo(b.x - ux * headLen + uy * headLen * 0.5, b.y - uy * headLen - ux * headLen * 0.5);
-        ctx.closePath();
-        ctx.fillStyle = "rgba(80, 80, 120, " + alpha + ")";
-        ctx.fill();
-        ctx.stroke();
       }
     }
 
