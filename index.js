@@ -50,7 +50,7 @@
     var fretboardH = (strings + 1) * cellH;
     var originX = (w - fretboardW) / 2;
     var originY = (h - fretboardH) / 2;
-    var left = Math.max(24, originX - 36);
+    var left = Math.max(16, originX - 14);
 
     for (var s = 0; s < stringFilterInputs.length; s++) {
       var input = stringFilterInputs[s];
@@ -76,9 +76,6 @@
       input.type = "checkbox";
       input.setAttribute("data-string-index", s);
 
-      var txt = document.createElement("span");
-      txt.textContent = "S" + (s + 1);
-
       input.addEventListener("change", function () {
         var selected = [];
         for (var i = 0; i < stringFilterInputs.length; i++) {
@@ -90,7 +87,6 @@
       });
 
       row.appendChild(input);
-      row.appendChild(txt);
       host.appendChild(row);
       stringFilterInputs.push(input);
     }

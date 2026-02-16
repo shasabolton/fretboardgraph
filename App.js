@@ -8,7 +8,7 @@ class App {
     this._progressionSelect = null;
     this.semiMatrix = [];
     this._stringsUsed = this._stringSemis.length > 1
-      ? [this._stringSemis.length - 2, this._stringSemis.length - 1]
+      ? [0, 1]
       : [0];
     this._stringFilterInputs = [];
     this.progressionPaths = [];
@@ -166,7 +166,7 @@ class App {
     }
     if (kept.length === 0) {
       kept = this._stringSemis.length > 1
-        ? [this._stringSemis.length - 2, this._stringSemis.length - 1]
+        ? [0, 1]
         : [0];
     }
     this._stringsUsed = kept;
