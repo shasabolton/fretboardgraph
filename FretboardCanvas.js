@@ -160,6 +160,20 @@ class FretboardCanvas {
       }
     }
 
+    var marker = self.app.getPlaybackMarker(performance.now());
+    if (marker && marker.point) {
+      var markerPx = toPx(marker.point);
+      var pulse = marker.pulse || 0;
+      var dotX = markerPx.x;
+      var dotY = markerPx.y + radius * 0.35;
+      var dotRadius = Math.max(2, radius * (0.12 + pulse * 0.08));
+      var dotAlpha = marker.playing ? 0.45 + pulse * 0.55 : 0.45;
+      ctx.beginPath();
+      ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(220, 35, 35, " + dotAlpha + ")";
+      ctx.fill();
+    }
+
     ctx.restore();
   }
 }

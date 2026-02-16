@@ -50,7 +50,7 @@
     var fretboardH = (strings + 1) * cellH;
     var originX = (w - fretboardW) / 2;
     var originY = (h - fretboardH) / 2;
-    var left = Math.max(56, originX - 10);
+    var left = Math.max(24, originX - 36);
 
     for (var s = 0; s < stringFilterInputs.length; s++) {
       var input = stringFilterInputs[s];
@@ -131,6 +131,13 @@
       flipBtn.addEventListener("click", function () {
         app.toggleFlipVertical();
         flipBtn.textContent = app.flipVertical ? "Flip V ✓" : "Flip V";
+      });
+    }
+    var playBtn = document.getElementById("playBtn");
+    if (playBtn) {
+      app.setPlaybackUI(playBtn);
+      playBtn.addEventListener("click", function () {
+        app.togglePlayback();
       });
     }
     var shiftLeft = document.getElementById("shiftLeftBtn");
