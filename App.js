@@ -105,7 +105,7 @@ class App {
     }
 
     var paths = [];
-    var maxJump = 3;
+    var maxJump = 4;
     function cartesian(acc, idx) {
       if (idx === candidates.length) {
         paths.push(acc.slice());

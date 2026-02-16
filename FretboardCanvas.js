@@ -166,8 +166,10 @@ class FretboardCanvas {
       var pulse = marker.pulse || 0;
       var dotX = markerPx.x;
       var dotY = markerPx.y;
-      var dotRadius = radius;
-      var dotAlpha = marker.playing ? 0.2 + pulse * 0.3 : 0.2;
+      var minDotRadius = 1;
+      var maxDotRadius = radius;
+      var dotRadius = minDotRadius + (maxDotRadius - minDotRadius) * pulse;
+      var dotAlpha = 0.45;
       ctx.beginPath();
       ctx.arc(dotX, dotY, dotRadius, 0, Math.PI * 2);
       ctx.fillStyle = "rgba(220, 35, 35, " + dotAlpha + ")";
