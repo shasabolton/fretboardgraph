@@ -54,7 +54,8 @@ class FretboardCanvas {
     ctx.rect(neckLeft, neckTop, fretboardW, neckBottom - neckTop);
     ctx.clip();
 
-    ctx.fillStyle = "burlywood";
+    var neckColor = "burlywood";
+    ctx.fillStyle = neckColor;
     ctx.fillRect(neckLeft, neckTop, fretboardW, neckBottom - neckTop);
 
     var neckHeight = neckBottom - neckTop;
@@ -94,10 +95,10 @@ class FretboardCanvas {
     var pathsToDraw = paths.length > 0 && pathIdx >= 0 && pathIdx < paths.length
       ? [paths[pathIdx]]
       : paths;
-    var alpha = pathsToDraw.length === 1 ? 0.6 : 0.35;
-    var pathColor = "rgba(80, 80, 120, " + alpha + ")";
+    var alpha = pathsToDraw.length === 1 ? 0.9 : 0.65;
+    var pathColor = "rgba(40, 255, 95, " + alpha + ")";
     ctx.strokeStyle = pathColor;
-    ctx.lineWidth = Math.max(1, radius * 0.22);
+    ctx.lineWidth = Math.max(2, radius * 0.4);
     ctx.lineCap = "round";
     ctx.lineJoin = "round";
     for (var pi = 0; pi < pathsToDraw.length; pi++) {
@@ -143,18 +144,15 @@ class FretboardCanvas {
         var cy = y((s + 1) * cellH);
         var semis = self.app.calcSemitones(s, f);
         var deg = self.app.semitonesToDegree(semis);
-        var prog = self.app.chordProgression || [];
-        var isProg = prog.indexOf(deg) !== -1;
-
         ctx.beginPath();
         ctx.arc(cx, cy, radius, 0, Math.PI * 2);
         ctx.strokeStyle = "#333";
         ctx.stroke();
-        ctx.fillStyle = isProg ? self._progressionNoteColor : "#fff";
+        ctx.fillStyle = neckColor;
         ctx.fill();
 
         ctx.fillStyle = "#333";
-        ctx.font = radius + "px sans-serif";
+        ctx.font = "bold " + (radius * 1.1) + "px sans-serif";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
         ctx.fillText(deg, cx, cy);
