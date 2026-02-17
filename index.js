@@ -5,18 +5,23 @@
   function resize() {
     var canvas = document.getElementById("fretboard");
     if (!canvas) return;
+    var controls = document.getElementById("controls");
     var frets = app.visibleFrets;
     var strings = app.stringSemis.length;
     var aspect = (frets * 2) / (strings + 1);
     var vw = window.innerWidth;
     var vh = window.innerHeight;
+    var edgePad = 8;
+    var controlsH = controls ? Math.ceil(controls.getBoundingClientRect().height) : 0;
+    var availW = Math.max(120, vw - edgePad * 2);
+    var availH = Math.max(120, vh - controlsH - edgePad * 2);
     var cw, ch;
-    if (vw / vh > aspect) {
-      ch = vh;
-      cw = vh * aspect;
+    if (availW / availH > aspect) {
+      ch = availH;
+      cw = availH * aspect;
     } else {
-      cw = vw;
-      ch = vw / aspect;
+      cw = availW;
+      ch = availW / aspect;
     }
     cw = Math.max(1, Math.round(cw));
     ch = Math.max(1, Math.round(ch));

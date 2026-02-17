@@ -6,22 +6,55 @@
   <title>Fretboard Graph</title>
   <style>
     * { box-sizing: border-box; }
-    body { margin: 0; overflow: hidden; }
-    body { position: relative; display: flex; justify-content: center; align-items: center; min-height: 100vh; background: #444; }
+    body { margin: 0; overflow: hidden; min-height: 100vh; background: #444; }
     #fretboard {
       display: block;
+      margin: 0 auto;
       touch-action: none;
     }
     #controls {
-      position: absolute;
-      top: 8px;
-      right: 8px;
+      position: relative;
+      width: 100%;
       display: flex;
-      gap: 8px;
-      z-index: 1;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 8px 6px;
+      z-index: 3;
     }
     #controls button, #controls select {
-      padding: 6px 12px;
+      padding: 4px 8px;
+      min-height: 32px;
+      font-size: 14px;
+      line-height: 1;
+      max-width: calc(100vw - 16px);
+    }
+    #pathControls {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+    }
+    #pathLabel {
+      color: #fff;
+      font: 13px sans-serif;
+      min-width: 80px;
+      text-align: center;
+    }
+    @media (max-width: 540px) {
+      #controls {
+        gap: 4px;
+        padding: 6px 6px 4px;
+      }
+      #controls button, #controls select {
+        min-height: 30px;
+        padding: 3px 7px;
+        font-size: 13px;
+      }
+      #pathLabel {
+        display: none;
+      }
     }
     #stringFilters {
       position: absolute;

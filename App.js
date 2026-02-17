@@ -105,7 +105,7 @@ class App {
 
     var paths = [];
     var maxJump = 4;
-    var maxPathSpan = 5;
+    var maxPathSpan = 4;
     var self = this;
     function cartesian(acc, idx) {
       if (idx === candidates.length) {
