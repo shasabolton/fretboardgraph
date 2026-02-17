@@ -515,8 +515,7 @@ class App {
   }
 
   calcSemitones(stringIndex, fretIndex) {
-    var loopFret = ((fretIndex + this._fretOffset) % this._loopFrets + this._loopFrets) % this._loopFrets;
-    return this._stringSemis[stringIndex] + loopFret;
+    return this._stringSemis[stringIndex] + fretIndex + this._fretOffset;
   }
 
   get stringSemis() { return this._stringSemis; }
