@@ -1,6 +1,9 @@
 class App {
   constructor() {
     this._stringSemis = [0, 5, 10, 15, 19, 24];
+    this._loopFrets = 11;
+    this._visibleFrets = 7;
+    this._fretOffset = 0;
     this.fretboardCanvas = null;
     this._handed = "right";
     this._flipVertical = false;
@@ -32,7 +35,7 @@ class App {
 
   generateSemisMatrix() {
     var rows = this._stringSemis.length;
-    var cols = 11;
+    var cols = this._visibleFrets;
     this.semiMatrix = [];
     for (var s = 0; s < rows; s++) {
       this.semiMatrix[s] = [];
@@ -44,11 +47,7 @@ class App {
 
   addFretOffset(delta) {
     if (delta === 0) return;
-    var arr = [];
-    for (var i = 0; i < this._stringSemis.length; i++) {
-      arr.push(this._stringSemis[i] + delta);
-    }
-    this.setStringSemis(arr);
+    this.setFretOffset(this._fretOffset + delta);
   }
 
   _arraysEqual(a, b) {
@@ -106,9 +105,11 @@ class App {
 
     var paths = [];
     var maxJump = 4;
+    var maxPathSpan = 5;
+    var self = this;
     function cartesian(acc, idx) {
       if (idx === candidates.length) {
-        paths.push(acc.slice());
+        if (self._calcPathLoopSpan(acc) <= maxPathSpan) paths.push(acc.slice());
         return;
       }
       for (var k = 0; k < candidates[idx].length; k++) {
@@ -170,6 +171,14 @@ class App {
         : [0];
     }
     this._stringsUsed = kept;
+    this.update();
+  }
+
+  setFretOffset(val) {
+    var loop = this._loopFrets;
+    var norm = ((val % loop) + loop) % loop;
+    if (this._fretOffset === norm) return;
+    this._fretOffset = norm;
     this.update();
   }
 
@@ -429,6 +438,25 @@ class App {
     return 130.81278265 * Math.pow(2, semis / 12);
   }
 
+  _calcPathLoopSpan(path) {
+    if (!path || path.length < 2) return 0;
+    var loop = this._loopFrets;
+    var frets = [];
+    for (var i = 0; i < path.length; i++) {
+      var f = ((path[i].x + this._fretOffset) % loop + loop) % loop;
+      frets.push(f);
+    }
+    frets.sort(function (a, b) { return a - b; });
+    var largestGap = 0;
+    for (var j = 0; j < frets.length - 1; j++) {
+      var gap = frets[j + 1] - frets[j];
+      if (gap > largestGap) largestGap = gap;
+    }
+    var wrapGap = loop - frets[frets.length - 1] + frets[0];
+    if (wrapGap > largestGap) largestGap = wrapGap;
+    return loop - largestGap;
+  }
+
   getPlaybackMarker(nowMs) {
     var path = this._getSelectedPath();
     if (!path || !path.length) return null;
@@ -486,7 +514,8 @@ class App {
   }
 
   calcSemitones(stringIndex, fretIndex) {
-    return this._stringSemis[stringIndex] % 12 + fretIndex;
+    var loopFret = ((fretIndex + this._fretOffset) % this._loopFrets + this._loopFrets) % this._loopFrets;
+    return this._stringSemis[stringIndex] % 12 + loopFret;
   }
 
   get stringSemis() { return this._stringSemis; }
@@ -496,6 +525,7 @@ class App {
   get pathIndex() { return this._pathIndex; }
   get chordProgression() { return this._chordProgression; }
   get isPlaying() { return this._isPlaying; }
+  get visibleFrets() { return this._visibleFrets; }
 
   init() {
     var canvas = document.getElementById("fretboard");

@@ -5,7 +5,7 @@
   function resize() {
     var canvas = document.getElementById("fretboard");
     if (!canvas) return;
-    var frets = 11;
+    var frets = app.visibleFrets;
     var strings = app.stringSemis.length;
     var aspect = (frets * 2) / (strings + 1);
     var vw = window.innerWidth;
@@ -42,7 +42,7 @@
     host.style.width = w + "px";
     host.style.height = h + "px";
 
-    var frets = 11;
+    var frets = app.visibleFrets;
     var strings = app.stringSemis.length;
     var cellH = Math.min(w / (frets * 2), h / (strings + 1));
     var cellW = 2 * cellH;

@@ -3,7 +3,7 @@ class FretboardCanvas {
     this.canvas = canvas;
     this.ctx = canvas.getContext("2d");
     this.app = app;
-    this.frets = 11;
+    this.frets = app.visibleFrets;
     this.strings = app.stringSemis.length;
     this._progressionNoteColor = "#B8D4E8";
   }
@@ -20,6 +20,7 @@ class FretboardCanvas {
     var self = this;
     var c = this.canvas;
     var ctx = this.ctx;
+    this.frets = this.app.visibleFrets;
     var w = c.width;
     var h = c.height;
     var handed = this.app.handed;
@@ -27,7 +28,7 @@ class FretboardCanvas {
 
     ctx.clearRect(0, 0, w, h);
 
-    // --- Layout: cell aspect w=2h, 11 equal fret cells ---
+    // --- Layout: cell aspect w=2h, equal visible fret cells ---
     var cellH = Math.min(w / (this.frets * 2), h / (this.strings + 1));
     var cellW = 2 * cellH;
     var fretboardW = this.frets * cellW;
