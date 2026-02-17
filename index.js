@@ -111,7 +111,7 @@
       for (var i = 0; i < CHORD_PROGRESSIONS.length; i++) {
         var opt = document.createElement("option");
         opt.value = i;
-        opt.textContent = CHORD_PROGRESSIONS[i].name;
+        opt.textContent = CHORD_PROGRESSIONS[i].name + " (" + CHORD_PROGRESSIONS[i].progression.join("-") + ")";
         sel.appendChild(opt);
       }
       sel.selectedIndex = 0;
