@@ -435,7 +435,8 @@ class App {
   }
 
   _semitonesToFrequency(semis) {
-    return 130.81278265 * Math.pow(2, semis / 12);
+    // semis=0 is low E (E2), then rises chromatically.
+    return 82.40688923 * Math.pow(2, semis / 12);
   }
 
   _calcPathLoopSpan(path) {
@@ -514,8 +515,8 @@ class App {
   }
 
   calcSemitones(stringIndex, fretIndex) {
-   console.log("calcsemis");
-    return (this._stringSemis[stringIndex] + fretIndex+this._fretOffset)% 12;
+    var loopFret = ((fretIndex + this._fretOffset) % this._loopFrets + this._loopFrets) % this._loopFrets;
+    return this._stringSemis[stringIndex] + loopFret;
   }
 
   get stringSemis() { return this._stringSemis; }
