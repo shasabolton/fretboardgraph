@@ -47,7 +47,7 @@ class FretboardCanvas {
     var neckBottom = originY + fretboardH;
     var neckLeft = originX;
     var neckRight = originX + fretboardW;
-    var radius = Math.min(cellW, cellH) * 0.28;
+    var radius = Math.min(cellW, cellH) * 3/8;
 
     ctx.save();
     ctx.beginPath();
