@@ -4,6 +4,7 @@ class App {
     this._loopFrets = 11;
     this._visibleFrets = 7;
     this._fretOffset = 0;
+    this._fretOffsetSemis = 0;
     this.fretboardCanvas = null;
     this._handed = "right";
     this._flipVertical = false;
@@ -31,6 +32,8 @@ class App {
     this._beatTimer = 0;
     this._rafId = 0;
     this._audioCtx = null;
+    this._lastPlayedSemis = null;
+    this._lastPlayedPanSemis = 0;
   }
 
   generateSemisMatrix() {
@@ -47,6 +50,7 @@ class App {
 
   addFretOffset(delta) {
     if (delta === 0) return;
+    this._fretOffsetSemis += delta;
     this.setFretOffset(this._fretOffset + delta);
   }
 
@@ -296,6 +300,8 @@ class App {
     this._activeStep = 0;
     this._beatInStep = 0;
     this._lastBeatAtMs = 0;
+    this._lastPlayedSemis = null;
+    this._lastPlayedPanSemis = this._fretOffsetSemis;
     this._clearTransition();
     this._ensureAudioContext();
     this._runBeat();
@@ -313,6 +319,8 @@ class App {
     }
     this._beatInStep = 0;
     this._lastBeatAtMs = 0;
+    this._lastPlayedSemis = null;
+    this._lastPlayedPanSemis = this._fretOffsetSemis;
     this._clearTransition();
   }
 
@@ -417,7 +425,14 @@ class App {
     var step = this._activeStep;
     if (step < 0 || step >= path.length) step = 0;
     var pt = path[step];
-    var semis = this.calcSemitones(pt.y, pt.x);
+    var semis = this.calcPitchSemitones(pt.y, pt.x);
+    var panDelta = this._fretOffsetSemis - this._lastPlayedPanSemis;
+    if (this._lastPlayedSemis !== null && panDelta !== 0) {
+      var target = this._lastPlayedSemis + panDelta;
+      semis = this._closestOctaveSemis(semis, target);
+    }
+    this._lastPlayedSemis = semis;
+    this._lastPlayedPanSemis = this._fretOffsetSemis;
     var freq = this._semitonesToFrequency(semis);
     var t = ctx.currentTime;
 
@@ -516,6 +531,19 @@ class App {
 
   calcSemitones(stringIndex, fretIndex) {
     return this._stringSemis[stringIndex] + fretIndex + this._fretOffset;
+  }
+
+  calcPitchSemitones(stringIndex, fretIndex) {
+    // Keep playback transposition tied to every pan step,
+    // even when wrapped view candidates resolve to the same degree spot.
+    return this.calcSemitones(stringIndex, fretIndex) + this._fretOffsetSemis;
+  }
+
+  _closestOctaveSemis(value, target) {
+    var out = value;
+    while (out - target > 6) out -= 12;
+    while (target - out > 6) out += 12;
+    return out;
   }
 
   get stringSemis() { return this._stringSemis; }
